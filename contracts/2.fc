@@ -32,9 +32,9 @@
         deepNum += 1;
         sum += matrixA.at(rowNum).at(deepNum) * matrixB.at(deepNum).at(colNum);
       }
-      row.tpush(sum);
+      row~tpush(sum);
     }
-    ret.tpush(row);
+    ret~tpush(row);
   }
   return ret;
 }
