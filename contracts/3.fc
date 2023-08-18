@@ -49,28 +49,30 @@
 
   int flag = false;
   do {
-    int can_read = min(flag_bits - medium_bits, s.slice_bits());
-    medium_bits += can_read;
-    medium = (medium << can_read) + s~load_uint(can_read);
+    while (~ s.slice_data_empty?()) {
+      int can_read = min(flag_bits - medium_bits, s.slice_bits());
+      medium_bits += can_read;
+      medium = (medium << can_read) + s~load_uint(can_read);
 
-    if (medium_bits == flag_bits) {
-      if (medium == flag) {
-        if (b.builder_bits() + value_bits > 1023) {
-          list = cons(b, list);
-          b = begin_cell();
+      if (medium_bits == flag_bits) {
+        if (medium == flag) {
+          if (b.builder_bits() + value_bits > 1023) {
+            list = cons(b, list);
+            b = begin_cell();
+          }
+          b~store_uint(value, value_bits);
+          medium = 0;
+          medium_bits = 0;
+        } else {
+          int left_bit = medium >> (medium_bits - 1);
+          if (b.builder_bits() == 1023) {
+            list = cons(b, list);
+            b = begin_cell();
+          }
+          b~store_uint(left_bit, 1);
+          medium_bits -= 1;
+          medium = medium & ((1 << medium_bits) - 1);
         }
-        b~store_uint(value, value_bits);
-        medium = 0;
-        medium_bits = 0;
-      } else {
-        int left_bit = medium >> (medium_bits - 1);
-        if (b.builder_bits() == 1023) {
-          list = cons(b, list);
-          b = begin_cell();
-        }
-        b~store_uint(left_bit, 1);
-        medium_bits -= 1;
-        medium = medium & ((1 << medium_bits) - 1);
       }
     }
 
