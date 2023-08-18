@@ -22,7 +22,7 @@
       return c;
     }
     slice s = c.begin_parse();
-    repeat (c.slice_refs()) {
+    repeat (s.slice_refs()) {
       list = cons(s~load_ref(), list);
     }
   }
