@@ -9,13 +9,42 @@
 () recv_internal() {
 }
 
+(int) is_null(tuple t) inline asm "ISNULL";
+
 ;; testable
 (cell) caesar_cipher_encrypt(int shift, cell text) method_id {
-  return begin_cell().end_cell();
+  tuple list = null();
+  slice s = text.begin_parse().skip_bits(32);
+  builder b = begin_cell();
+  b~store_uint(0, 32);
+  int flag = false;
+  do {
+    repeat (s.slice_bits() / 8) {
+      int letter = s~load_uint(8);
+      letter = (letter + shift) % 256; 
+      b~store_uint(letter, 8);
+    }
+    list = cons(b, list);
+
+    if (s.slice_refs()) {
+      s = s~load_ref().begin_parse();
+      b = begin_cell();
+    } else {
+      flag = true;
+    }
+  } until (flag);
+
+  (b, list) = uncons(list);
+  while (~ is_null(list)) {
+    cell c = b.end_cell();
+    (b, list) = uncons(list);
+    b = b.store_ref(c);
+  }
+  return b.end_cell();
 }
 
 ;; testable
 (cell) caesar_cipher_decrypt(int shift, cell text) method_id {
-  return begin_cell().end_cell();
+  return caesar_cipher_encrypt(- shift, text);
 }
 
