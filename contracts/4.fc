@@ -21,7 +21,7 @@
   do {
     repeat (s.slice_bits() / 8) {
       int letter = s~load_uint(8);
-      letter = (letter + shift) % 256; 
+      letter = (letter + shift) % 128; 
       b~store_uint(letter, 8);
     }
     list = cons(b, list);
