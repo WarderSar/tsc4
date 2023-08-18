@@ -50,9 +50,8 @@
   int flag = false;
   do {
     while (~ s.slice_data_empty?()) {
-      int can_read = min(flag_bits - medium_bits, s.slice_bits());
-      medium_bits += can_read;
-      medium = (medium << can_read) + s~load_uint(can_read);
+      medium = (medium << 1) + s~load_uint(1);
+      medium_bits += 1;
 
       if (medium_bits == flag_bits) {
         if (medium == flag) {
