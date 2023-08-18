@@ -25,4 +25,5 @@
       list = cons(s~load_ref(), list);
     }
   }
+  return begin_cell().end_cell();
 }
