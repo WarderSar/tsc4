@@ -30,11 +30,11 @@
   }
 
   tuple ret = empty_tuple();
-  ret.tpush(cur);
+  ret~tpush(cur);
 
   repeat (k - 1) {
     (prev, cur) = (cur, prev + cur);
-    ret.tpush(cur);
+    ret~tpush(cur);
   }
   
   return ret;
