@@ -9,8 +9,23 @@
 () recv_internal() {
 }
 
+(int) is_null(tuple t) inline asm "ISNULL";
+
 ;; testable
 (cell) find_branch_by_hash(int hash, cell tree) method_id {
-  check2;
+  tuple list = null();
+  list = cons(tree, list);
+
+  while (~ is_null(list)) {
+    (cell c, list) = uncons(list);
+    if (cell_hash(c) == hash) {
+      return c;
+    }
+    slice s = c.begin_parse();
+    repeat (c.slice_refs()) {
+      list = cons(s~load_ref(), list);
+    }
+  }
+
   return begin_cell().end_cell();
 }
