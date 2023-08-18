@@ -46,16 +46,16 @@
   int flag_bits = ubitsize(flag);
   int value_bits = ubitsize(value);
 
-
-  int flag = false;
-  do {
-    while (~ s.slice_data_empty?()) {
+  while (~ s.slice_empty?()) {
+    if (s.slice_data_empty?()) {
+      s = s~load_ref().begin_parse();
+    } else {
       medium = (medium << 1) + s~load_uint(1);
       medium_bits += 1;
 
       if (medium_bits == flag_bits) {
         if (medium == flag) {
-          if (b.builder_bits() + value_bits > 1023) {
+          if ((b.builder_bits() + value_bits) > 1023) {
             list = cons(b, list);
             b = begin_cell();
           }
@@ -74,16 +74,10 @@
         }
       }
     }
-
-    if (s.slice_refs()) {
-      s = s~load_ref().begin_parse();
-    } else {
-      flag = true;
-    }
-  } until (flag);
+  }
 
   if (medium_bits > 0) {
-    if (b.builder_bits() + medium_bits > 1023) {
+    if ((b.builder_bits() + medium_bits) > 1023) {
       list = cons(b, list);
       b = begin_cell();
     }
